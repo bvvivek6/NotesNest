@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 
-const AddEditNotes = () => {
+const AddEditNotes = ({ notedata, type }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleTagChange = (e) => {
-    setTags(e.target.value);
-  };
+  const editNote = async () => {};
+  const addNewEdit = async () => {};
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const handleAddNote = () => {
+    if (!title) {
+      setError("Please Enter the title! ");
+    }
+    if (!content) {
+      setError("Please Enter the content! ");
+    }
+    setError("");
 
-  const handleContentChange = (e) => {
-    setContent(e.target.value);
+    if (type === "edit") {
+      editNote();
+    } else {
+      addNewEdit();
+    }
   };
 
   return (
@@ -27,7 +35,7 @@ const AddEditNotes = () => {
             className="w-full p-3 mt-2 bg-transparent border-b-2 border-gray-500 text-white outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Add title"
             value={title}
-            onChange={handleTitleChange}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 
@@ -39,7 +47,7 @@ const AddEditNotes = () => {
             placeholder="Add note..."
             rows="6"
             value={content}
-            onChange={handleContentChange}
+            onChange={(e) => setContent(e.target.value)}
           />
         </div>
 
@@ -51,15 +59,16 @@ const AddEditNotes = () => {
             className="w-full p-3 mt-2 bg-transparent border-b-2 border-gray-500 text-white outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Add tags (comma separated)"
             value={tags}
-            onChange={handleTagChange}
+            onChange={(e) => setTags(e.target.value)}
           />
         </div>
-
-        {/* Save Button */}
+        {error && (
+          <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+        )}
         <div className="flex justify-end">
           <button
             className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
-            onClick={() => alert("Note Saved!")}
+            onClick={handleAddNote}
           >
             Save Note
           </button>

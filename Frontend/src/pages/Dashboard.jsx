@@ -76,7 +76,13 @@ const Dashboard = () => {
         contentLabel="Add Note Modal"
         className="w-[40%]"
       >
-        <AddEditNotes />
+        <AddEditNotes
+          type={setIsModalOpen.type}
+          notedata={setIsModalOpen.data}
+          onClose={() =>
+            setIsModalOpen({ isShown: false, type: "add", data: null })
+          }
+        />
       </Modal>
       {/* {isModalOpen && (
         <div className="fixed inset-0 w-fullflex justify-center items-center z-50">
