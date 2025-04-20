@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { isValidEmail } from "../utils/helper";
 import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [name, setName] = useState("");
