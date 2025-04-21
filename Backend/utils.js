@@ -1,16 +1,16 @@
 const jwt = require("jsonwebtoken");
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers("authorization");
-  const token = authHeader && authHeader.split("")[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Expecting format: "Bearer <token>"
 
   if (!token) {
-    return res.sendStatus(401);
+    return res.status(401).json({ message: "Access token missing" });
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      return res.sendStatus(401);
+      return res.status(403).json({ message: "Invalid token" });
     }
     req.user = user;
     next();

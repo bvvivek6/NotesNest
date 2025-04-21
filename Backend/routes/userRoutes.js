@@ -1,4 +1,5 @@
 const routes = require("express").Router();
+
 const { createUser, loginUser } = require("../controllers/userControllers");
 
 routes.post("/create-acc", createUser);

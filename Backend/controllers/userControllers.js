@@ -1,7 +1,5 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { authenticateToken } = require("../utils");
 const users = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 
@@ -41,7 +39,7 @@ const createUser = async (req, res) => {
 
     // Create access token
     const accessToken = jwt.sign(
-      { id: newUser._id, email: newUser.email },
+      { _id: newUser._id, email: newUser.email },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
@@ -87,29 +85,31 @@ const loginUser = async (req, res) => {
         message: "User not found",
       });
     }
+    const isPasswordValid = await bcrypt.compare(password, userInfo.password);
 
-    // Check password match (plain text comparison here, can be improved with bcrypt)
-    if (userInfo.password === password) {
-      const payload = { id: userInfo._id, email: userInfo.email };
-      const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "7d",
-      });
-
-      return res.json({
-        error: false,
-        message: "User logged in successfully",
-        accessToken,
-        user: {
-          fullName: userInfo.fullName,
-          email: userInfo.email,
-        },
-      });
-    } else {
+    if (!isPasswordValid) {
       return res.status(401).json({
         error: true,
         message: "Invalid password",
       });
     }
+
+    // Check password match (plain text comparison here, can be improved with bcrypt)
+
+    const payload = { id: userInfo._id, email: userInfo.email };
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "7d",
+    });
+
+    return res.json({
+      error: false,
+      message: "User logged in successfully",
+      accessToken,
+      user: {
+        fullName: userInfo.fullName,
+        email: userInfo.email,
+      },
+    });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({

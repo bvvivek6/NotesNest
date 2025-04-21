@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
+const notesRoutes = require("./routes/notesRoutes");
 
 const PORT = 3000;
 const mongoURL = process.env.MONGO_DB_URI;
@@ -25,6 +26,7 @@ mongoose
   });
 
 app.use("/api/v1/", userRoutes);
+app.use("/api/v1/", notesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
