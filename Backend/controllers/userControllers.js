@@ -119,7 +119,35 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  const user = req.user; // comes from the decoded token in middleware
+
+  try {
+    const isUser = await users.findById({ _id: user._id }); // hide password
+
+    if (!isUser) {
+      return res.status(404).json({
+        error: true,
+        message: "User not found",
+      });
+    }
+
+    return res.json({
+      error: false,
+      user: isUser,
+      message: "User is valid",
+    });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    return res.status(500).json({
+      error: true,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
+  getUser,
 };

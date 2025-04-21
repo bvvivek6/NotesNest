@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { isValidEmail } from "../utils/helper";
+import axiosInstance from "../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handlelogin = async (e) => {
     e.preventDefault();
@@ -20,7 +23,32 @@ const Login = () => {
       setError("Password must be at least 6 characters.");
       return;
     }
+
     setError("");
+
+    //api call
+    try {
+      const response = await axiosInstance.post("/api/v1/login", {
+        email: email,
+        password: password,
+      });
+
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something unexpected happened!");
+      }
+    }
   };
 
   return (

@@ -77,7 +77,81 @@ const editnote = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  const user = req.user;
+  try {
+    const notes = await Notes.find({ userId: user._id }).sort({ isPinned: -1 });
+    return res.json({
+      message: "All notes recieved successfully!",
+      notes,
+      error: false,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server Error!" });
+  }
+};
+
+const deletenote = async (req, res) => {
+  const noteId = req.params.id;
+  const user = req.user;
+
+  try {
+    const note = await Notes.findOne({ _id: noteId, userId: user._id });
+    if (!note) {
+      return res.status(404).json({
+        error: true,
+        message: "Note not found",
+      });
+    }
+
+    await Notes.deleteOne({ _id: noteId, userId: user._id });
+
+    return res.json({
+      error: false,
+      message: "Note deleted Successfully!",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Internal server error!",
+    });
+  }
+};
+
+const pinnote = async (req, res) => {
+  const noteId = req.params.id;
+  const { isPinned } = req.body;
+  const user = req.user;
+
+  try {
+    const note = await Notes.findOne({
+      _id: noteId,
+      userId: user._id.toString(),
+    });
+
+    if (!note) {
+      return res.status(404).json({ error: true, message: "No note found" });
+    }
+
+    if (typeof isPinned === "boolean") {
+      note.isPinned = isPinned;
+    }
+
+    await note.save();
+
+    return res.json({
+      error: false,
+      note,
+      message: "Note pinned Successfully!",
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 module.exports = {
   addnotes,
   editnote,
+  getAll,
+  deletenote,
+  pinnote,
 };
