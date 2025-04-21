@@ -2,6 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const users = require("../models/userModel");
 const bcrypt = require("bcryptjs");
+const sendWelcomeEmail = require("../sendWelcomeMail");
 
 const createUser = async (req, res) => {
   //destructure the requested message from the user
@@ -36,6 +37,11 @@ const createUser = async (req, res) => {
     });
 
     await newUser.save();
+    try {
+      await sendWelcomeEmail(email, fullName);
+    } catch (emailErr) {
+      console.error("Error sending welcome email:", emailErr.message);
+    }
 
     // Create access token
     const accessToken = jwt.sign(
