@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const users = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const sendWelcomeEmail = require("../sendWelcomeMail");
+const mongoose = require("mongoose");
 
 const createUser = async (req, res) => {
   //destructure the requested message from the user
@@ -152,8 +153,38 @@ const getUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const userId = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ error: true, message: "Invalid user ID" });
+  }
+
+  try {
+    const isUser = await users.findById(userId);
+    if (!isUser) {
+      return res.status(404).json({ error: true, message: "User not found" });
+    }
+
+    await users.findByIdAndDelete(userId);
+
+    return res.json({
+      error: false,
+      user: isUser,
+      message: "User Deleted",
+    });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    return res.status(500).json({
+      error: true,
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
   getUser,
+  deleteUser,
 };
