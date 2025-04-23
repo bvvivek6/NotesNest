@@ -1,14 +1,15 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import Profile from "./Profile";
 import Searchbar from "./Searchbar";
 
-const Navbar = () => {
+const Navbar = ({ userInfo }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const logout = () => {
-    navigate("/login");
+  const onlogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   const handleChange = (e) => setSearchTerm(e.target.value);
@@ -35,7 +36,7 @@ const Navbar = () => {
         onClear={handleClear}
       />
 
-      <Profile onLogout={logout} />
+      <Profile onLogout={onlogout} userInfo={userInfo} />
     </nav>
   );
 };

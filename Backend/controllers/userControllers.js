@@ -130,7 +130,7 @@ const getUser = async (req, res) => {
   const user = req.user; // comes from the decoded token in middleware
 
   try {
-    const isUser = await users.findById({ _id: user._id }); // hide password
+    const isUser = await users.findById(user._id); // hide password
 
     if (!isUser) {
       return res.status(404).json({

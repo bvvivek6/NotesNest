@@ -12,7 +12,7 @@ const Notes = ({
   onPinNote,
 }) => {
   return (
-    <div className="bg-[#161616] max-w-[400px]  text-white p-4 rounded-lg shadow-md font-mono tracking-tighter transition-all hover:shadow-lg ">
+    <div className="bg-[#161616] w-[300px]  text-white p-4 rounded-lg shadow-md font-mono tracking-tighter transition-all hover:shadow-lg ">
       <div className="flex justify-between items-center mb-4">
         <div className="text-xl font-semibold">{title}</div>
         <div className="text-[12px] text-gray-400">{date}</div>

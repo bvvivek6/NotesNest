@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const notesRoutes = require("./routes/notesRoutes");
+const cors = require("cors");
 
 const PORT = 3000;
 const mongoURL = process.env.MONGO_DB_URI;
@@ -12,7 +12,8 @@ const mongoURL = process.env.MONGO_DB_URI;
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:5173", // Frontend URL
+    credentials: true, // Allow cookies to be sent with requests
   })
 );
 

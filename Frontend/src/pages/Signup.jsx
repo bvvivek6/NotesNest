@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { isValidEmail } from "../utils/helper";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -25,7 +29,36 @@ const Signup = () => {
       setError("Password must be at least 6 characters.");
       return;
     }
+    try {
+      const response = await axiosInstance.post("/api/v1/create-acc", {
+        fullName: name,
+        email: email,
+        password: password,
+      });
+
+      if (response.data && response.data.error) {
+        setError(response.data.message);
+        return;
+      }
+      //successfull registration
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something unexpected happened!");
+      }
+    }
   };
+
   return (
     <motion.div
       initial={{ filter: "blur(10px)", opacity: 0 }}
@@ -66,17 +99,11 @@ const Signup = () => {
             />
             <input
               className="w-full px-4 py-2 text-black border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Username"
-              type="text"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              className="w-full px-4 py-2 text-black border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Password"
               type="password"
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
             <button
