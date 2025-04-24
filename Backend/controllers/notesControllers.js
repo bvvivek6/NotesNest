@@ -16,7 +16,7 @@ const addnotes = async (req, res) => {
       title,
       content,
       tags: tags || [],
-      userId: user._id,
+      userId: user.id,
     });
 
     await note.save();

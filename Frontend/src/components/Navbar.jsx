@@ -8,7 +8,7 @@ const Navbar = ({ userInfo }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const onlogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
     navigate("/");
   };
 

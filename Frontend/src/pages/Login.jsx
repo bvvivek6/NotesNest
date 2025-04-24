@@ -11,7 +11,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handlelogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!isValidEmail(email)) {
@@ -24,9 +24,8 @@ const Login = () => {
       return;
     }
 
-    setError("");
+    setError(""); // Clear any previous error
 
-    //api call
     try {
       const response = await axiosInstance.post("/api/v1/login", {
         email: email,
@@ -45,12 +44,9 @@ const Login = () => {
         error.response.data.message
       ) {
         setError(error.response.data.message);
-      } else {
-        setError("Something unexpected happened!");
       }
     }
   };
-
   return (
     <motion.div
       initial={{ filter: "blur(10px)", opacity: 0 }}
@@ -60,7 +56,7 @@ const Login = () => {
     >
       <div className="w-full md:w-1/2">
         <img
-          src="../public/loginv.jpg"
+          src="/loginv.jpg"
           alt="Login Visual"
           className="w-full h-auto md:h-full md:object-cover"
         />
@@ -71,7 +67,7 @@ const Login = () => {
           <h2 className="text-3xl font-semibold font-mono tracking-tighter text-center text-black mb-6">
             Welcome Back
           </h2>
-          <form onSubmit={handlelogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <input
               className="w-full px-4 py-2 text-black border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Email"

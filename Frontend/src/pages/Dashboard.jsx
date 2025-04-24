@@ -15,6 +15,10 @@ const Dashboard = () => {
     type: "add",
     data: null,
   });
+
+  const closeModal = () => {
+    setIsModalOpen({ isShown: false, type: "add", data: null });
+  };
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
   const navigate = useNavigate();
@@ -46,12 +50,26 @@ const Dashboard = () => {
       console.log(`An unexpected error happened ${err}`);
     }
   };
+  //delete note
+  const handleDelete = async (noteId) => {
+    try {
+      await axiosInstance.delete(`/api/v1/deletenote/${noteId}`);
+      setAllNotes((prevNotes) =>
+        prevNotes.filter((note) => note._id !== noteId)
+      );
+    } catch (err) {
+      console.error("Error deleting note:", err);
+    }
+  };
 
   useEffect(() => {
     getUserInfo();
     getAllNotes();
-    // return () => {}; clamp
   }, []);
+
+  useEffect(() => {
+    console.log("All Notes Updated:", allNotes);
+  }, [allNotes]);
 
   return (
     <div className="min-h-screen bg-[#0E0E0E] pt-20 relative">
@@ -72,7 +90,7 @@ const Dashboard = () => {
             tags={item.tags}
             pinned={item.isPinned}
             onEdit={() => alert("Edit note")}
-            onDelete={() => alert("Delete note")}
+            onDelete={() => handleDelete(item._id)}
             onPinNote={() => alert("Pin/Unpin note")}
           />
         ))}
@@ -89,7 +107,7 @@ const Dashboard = () => {
 
       <Modal
         isOpen={isModalOpen.isShown}
-        onRequestClose={() => setIsModalOpen({ isShown: false })}
+        onRequestClose={closeModal}
         style={{
           overlay: {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -106,27 +124,19 @@ const Dashboard = () => {
           },
         }}
         contentLabel="Add Note Modal"
-        className="w-[40%]"
       >
-        <AddEditNotes
-          type={setIsModalOpen.type}
-          notedata={setIsModalOpen.data}
-          onClose={() =>
-            setIsModalOpen({ isShown: false, type: "add", data: null })
-          }
-        />
-      </Modal>
-      {/* {isModalOpen && (
-        <div className="fixed inset-0 w-fullflex justify-center items-center z-50">
-          <AddEditNotes />
-          <button
-            onClick={toggleModal}
-            className="absolute right-0 top bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition"
-          >
-            X
-          </button>
+        <div className="w-[90vw] md:w-[40vw]">
+          <AddEditNotes
+            type={isModalOpen.type}
+            notedata={isModalOpen.data}
+            onClose={() => {
+              setIsModalOpen({ isShown: false, type: "add", data: null });
+              getAllNotes(); // Manually refresh notes when modal closes
+            }}
+            getAllNotes={getAllNotes}
+          />
         </div>
-      )} */}
+      </Modal>
     </div>
   );
 };
