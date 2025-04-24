@@ -18,7 +18,14 @@ const Dashboard = () => {
 
   const closeModal = () => {
     setIsModalOpen({ isShown: false, type: "add", data: null });
+    getAllNotes();
   };
+
+  const handleNoteSaved = () => {
+    setIsModalOpen({ isShown: false, type: "add", data: null });
+    getAllNotes();
+  };
+
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
   const navigate = useNavigate();
@@ -89,7 +96,13 @@ const Dashboard = () => {
             content={item.content}
             tags={item.tags}
             pinned={item.isPinned}
-            onEdit={() => alert("Edit note")}
+            onEdit={() =>
+              setIsModalOpen({
+                isShown: true,
+                type: "edit",
+                data: item,
+              })
+            }
             onDelete={() => handleDelete(item._id)}
             onPinNote={() => alert("Pin/Unpin note")}
           />
@@ -129,10 +142,8 @@ const Dashboard = () => {
           <AddEditNotes
             type={isModalOpen.type}
             notedata={isModalOpen.data}
-            onClose={() => {
-              setIsModalOpen({ isShown: false, type: "add", data: null });
-              getAllNotes(); // Manually refresh notes when modal closes
-            }}
+            onClose={closeModal}
+            onSaveSuccess={handleNoteSaved}
             getAllNotes={getAllNotes}
           />
         </div>
